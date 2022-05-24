@@ -277,11 +277,9 @@ public class MessagingService
         ITelegramBotClient botClient,
         CancellationToken ct)
     {
-        await Task.Delay(TimeSpan.FromSeconds(2), ct);
         await botClient.SendAnimationAsync(chatPreferences.ChatId,
             animation: new InputOnlineFile(new Uri("https://media.giphy.com/media/ENagATV1Gr9eg/giphy.gif")),
             cancellationToken: ct);
-        await Task.Delay(TimeSpan.FromSeconds(6), ct);
         var rnd = new Random();
         await botClient.SendTextMessageAsync(chatPreferences.ChatId,
             "Now you can set your timers! 🎉 \n"
