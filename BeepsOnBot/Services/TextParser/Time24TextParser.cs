@@ -8,7 +8,7 @@ public class Time24TextParser : ITextParser
     private const string Pattern =
         "^(?<hours>[0-2]{0,1}[0-9]{1}):?(?<minutes>[0-5]{1}[0-9]{1})?\\s*((?<hashtag>#{1})|$)\\s*(?<task>.*)?$";
 
-    public string[] PossibleValues { get; } = {"12:30 #call someone special", "22:30 #sleep", "11:54", "23 (hours)"};
+    public static string[] PossibleValues { get; } = {"12:30 #call someone special", "22:30 #sleep", "11:54", "23 (hours)"};
 
     public TextParseResult Parse(long chatId, string text, TimeZoneInfo tz)
     {

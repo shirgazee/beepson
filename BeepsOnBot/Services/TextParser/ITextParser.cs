@@ -4,7 +4,7 @@ namespace BeepsOnBot.Services.TextParser;
 
 public interface ITextParser
 {
-    string[] PossibleValues { get; }
+    static string[] PossibleValues { get; }
     
     TextParseResult Parse(long chatId, string text, TimeZoneInfo tz);
 }

@@ -13,7 +13,7 @@ public class TimeSpanTextParser : ITextParser
     private const string Pattern =
         "^(?<days>\\d+d)?\\s*(?<hours>\\d+h)?\\s*(?<minutes>\\d+m)?\\s*(?<seconds>\\d+s)?\\s*((?<hashtag>#{1})|$)\\s*(?<task>.*)?$";
 
-    public string[] PossibleValues { get; } = {"1h 30m #study", "30s", "90s #breathe"};
+    public static string[] PossibleValues { get; } = {"1h 30m #study", "30s", "90s #breathe"};
 
     public TextParseResult Parse(long chatId, string text, TimeZoneInfo tz)
     {

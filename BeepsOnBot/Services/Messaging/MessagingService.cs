@@ -1,9 +1,11 @@
 using System.Text;
 using BeepsOnBot.Database;
 using BeepsOnBot.Models;
+using BeepsOnBot.Services.TextParser;
 using BeepsOnBot.Services.Timer;
 using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
+using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BeepsOnBot.Services.Messaging;
@@ -73,6 +75,9 @@ public class MessagingService
             $"Your new timezone: {tz.DisplayName} 👍",
             replyMarkup: GetDefaultKeyboard(chatPreferences),
             cancellationToken: ct);
+
+        if(!chatPreferences.LastMessages.Any()) 
+            await SendOnboardingMessage(chatPreferences, botClient, ct);
     }
 
     private async Task<ChatPreferences?> GetChatPreferences(long chatId)
@@ -116,18 +121,26 @@ public class MessagingService
     {
         var pageValue = page ?? 21; // page with UTC time
         const int pageCount = 8;
-        
+
         var timezones = TimeZoneInfo.GetSystemTimeZones();
         var paginated = timezones
-            .Select(x => new List<InlineKeyboardButton>(1) {InlineKeyboardButton.WithCallbackData(x.DisplayName, x.Id)})
+            .Select(x => new List<InlineKeyboardButton>(1)
+            {
+                InlineKeyboardButton.WithCallbackData(x.DisplayName, x.Id)
+            })
             .Skip((pageValue - 1) * pageCount)
             .Take(pageCount)
             .ToList();
         paginated.Add(new List<InlineKeyboardButton>()
         {
-            InlineKeyboardButton.WithCallbackData("⬅️", pageValue - 1 <= 0 ? pageValue.ToString() : (pageValue - 1).ToString()),
+            InlineKeyboardButton.WithCallbackData("⬅️",
+                pageValue - 1 <= 0
+                    ? pageValue.ToString()
+                    : (pageValue - 1).ToString()),
             InlineKeyboardButton.WithCallbackData("➡️",
-                pageValue * pageCount < timezones.Count ? (pageValue + 1).ToString() : pageValue.ToString()),
+                pageValue * pageCount < timezones.Count
+                    ? (pageValue + 1).ToString()
+                    : pageValue.ToString()),
         });
 
         if (messageId != null)
@@ -255,6 +268,27 @@ public class MessagingService
     {
         await botClient.SendTextMessageAsync(chatPreferences.ChatId,
             "Could not parse your message 🤷‍♂️",
+            replyMarkup: GetDefaultKeyboard(chatPreferences),
+            cancellationToken: ct);
+    }
+
+    private async Task SendOnboardingMessage(
+        ChatPreferences chatPreferences,
+        ITelegramBotClient botClient,
+        CancellationToken ct)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(2), ct);
+        await botClient.SendAnimationAsync(chatPreferences.ChatId,
+            animation: new InputOnlineFile(new Uri("https://media.giphy.com/media/ENagATV1Gr9eg/giphy.gif")),
+            cancellationToken: ct);
+        await Task.Delay(TimeSpan.FromSeconds(6), ct);
+        var rnd = new Random();
+        await botClient.SendTextMessageAsync(chatPreferences.ChatId,
+            "Now you can set your timers! 🎉 \n"
+            + "️Try these: \n"
+            + $"- {Time12TextParser.PossibleValues[rnd.Next(Time12TextParser.PossibleValues.Length)]} \n"
+            + $"- {Time24TextParser.PossibleValues[rnd.Next(Time24TextParser.PossibleValues.Length)]} \n"
+            + $"- {TimeSpanTextParser.PossibleValues[rnd.Next(TimeSpanTextParser.PossibleValues.Length)]} \n",
             replyMarkup: GetDefaultKeyboard(chatPreferences),
             cancellationToken: ct);
     }
