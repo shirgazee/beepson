@@ -23,8 +23,8 @@
 ```
 git clone https://github.com/shirgazee/beepson
 ```
-2. Obtain telegram bot token from [BotFather](https://t.me/botfather)
-3. Change bot token in docker-compose:
+2. Obtain a telegram bot token from [BotFather](https://t.me/botfather)
+3. Set the bot token in docker-compose:
 ```
 environment:
       BEEPSON_TOKEN: "👉 here"
