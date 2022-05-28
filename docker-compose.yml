@@ -7,6 +7,6 @@ services:
       - data:/db
     environment:
       BEEPSON_TOKEN: "<YO>"
-      BEEPSON_DATA_DIR: "db"
+      BEEPSON_DATA_DIR: "/db"
 volumes:
   data:
