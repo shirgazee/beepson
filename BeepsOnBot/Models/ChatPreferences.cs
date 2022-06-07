@@ -24,7 +24,7 @@ public class ChatPreferences
     {
         LastMessages.Add(new ChatMessage(lastNotification.UserMessage, lastNotification.CreatedAt));
         LastMessages = LastMessages.OrderByDescending(x => x.Sent)
-            .Distinct()
+            .DistinctBy(x => x.Message)
             .Take(4)
             .ToList();
     }
