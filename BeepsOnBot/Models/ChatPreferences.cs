@@ -3,11 +3,11 @@ namespace BeepsOnBot.Models;
 public class ChatPreferences
 {
     public long ChatId { get; private set; }
-    
+
     public string TimeZoneId { get; private set; }
-    
+
     public List<ChatMessage> LastMessages { get; private set; }
-    
+
     public ChatPreferences(long chatId, string timeZoneId)
     {
         ChatId = chatId;
@@ -24,6 +24,8 @@ public class ChatPreferences
     {
         LastMessages.Add(new ChatMessage(lastNotification.UserMessage, lastNotification.CreatedAt));
         LastMessages = LastMessages.OrderByDescending(x => x.Sent)
-            .Take(4).ToList();
+            .Distinct()
+            .Take(4)
+            .ToList();
     }
 }

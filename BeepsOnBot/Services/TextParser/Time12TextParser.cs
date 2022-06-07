@@ -8,7 +8,8 @@ public class Time12TextParser : ITextParser
     private const string Pattern =
         "^(?<hours>[0-2]{0,1}[0-9]{1}):?(?<minutes>[0-5]{1}[0-9]{1})?\\s*(?<period>am|pm)\\s*((?<hashtag>#{1})|$)\\s*(?<task>.*)?$";
 
-    public static string[] PossibleValues { get; } = new[] {"11:30am #lunch", "6:30 pm #home", "06:00pm #dinner", "12pm"};
+    public static string[] PossibleValues { get; } =
+        new[] {"11:30am #lunch", "6:30 pm #home", "06:00pm #dinner", "12pm"};
 
     public TextParseResult Parse(long chatId, string text, TimeZoneInfo tz)
     {
@@ -29,10 +30,7 @@ public class Time12TextParser : ITextParser
             return TextParseResult.FalseResult;
 
         var task = string.Empty;
-        if (match.Groups["hashtag"].Success && match.Groups["task"].Success)
-        {
-            task = match.Groups["task"].Value.Trim();
-        }
+        if (match.Groups["hashtag"].Success && match.Groups["task"].Success) task = match.Groups["task"].Value.Trim();
 
         var now = DateTime.UtcNow;
         var notifyAtUnspecified = new DateTime(now.Year,
@@ -47,10 +45,7 @@ public class Time12TextParser : ITextParser
         if (period == "pm")
             notifyAtUtc = notifyAtUtc.AddHours(12);
 
-        while (notifyAtUtc < now)
-        {
-            notifyAtUtc = notifyAtUtc.AddDays(1);
-        }
+        while (notifyAtUtc < now) notifyAtUtc = notifyAtUtc.AddDays(1);
 
         return new TextParseResult(true, new TimerNotification(chatId, notifyAtUtc, task, text));
     }

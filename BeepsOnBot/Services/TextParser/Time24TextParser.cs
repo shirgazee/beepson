@@ -8,7 +8,8 @@ public class Time24TextParser : ITextParser
     private const string Pattern =
         "^(?<hours>[0-2]{0,1}[0-9]{1}):?(?<minutes>[0-5]{1}[0-9]{1})?\\s*((?<hashtag>#{1})|$)\\s*(?<task>.*)?$";
 
-    public static string[] PossibleValues { get; } = {"12:30 #call someone special", "22:30 #sleep", "11:54", "23 (hours)"};
+    public static string[] PossibleValues { get; } =
+        {"12:30 #call someone special", "22:30 #sleep", "11:54", "23 (hours)"};
 
     public TextParseResult Parse(long chatId, string text, TimeZoneInfo tz)
     {
@@ -25,10 +26,7 @@ public class Time24TextParser : ITextParser
             return TextParseResult.FalseResult;
 
         var task = string.Empty;
-        if (match.Groups["hashtag"].Success && match.Groups["task"].Success)
-        {
-            task = match.Groups["task"].Value.Trim();
-        }
+        if (match.Groups["hashtag"].Success && match.Groups["task"].Success) task = match.Groups["task"].Value.Trim();
 
         var now = DateTime.UtcNow;
         var notifyAtUnspecified = new DateTime(now.Year,
@@ -39,11 +37,8 @@ public class Time24TextParser : ITextParser
             0,
             DateTimeKind.Unspecified);
         var notifyAtUtc = TimeZoneInfo.ConvertTimeToUtc(notifyAtUnspecified, tz);
-        
-        while (notifyAtUtc < now)
-        {
-            notifyAtUtc = notifyAtUtc.AddDays(1);
-        }
+
+        while (notifyAtUtc < now) notifyAtUtc = notifyAtUtc.AddDays(1);
 
         return new TextParseResult(true, new TimerNotification(chatId, notifyAtUtc, task, text));
     }

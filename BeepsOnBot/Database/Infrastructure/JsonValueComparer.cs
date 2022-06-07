@@ -17,6 +17,6 @@ public class JsonValueComparer<TData> : ValueComparer<TData>
     {
     }
 
-    private static readonly JsonSerializerOptions JsonSerializerSettings = new JsonSerializerOptions
-        {DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull};
+    private static readonly JsonSerializerOptions JsonSerializerSettings =
+        new() {DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull};
 }

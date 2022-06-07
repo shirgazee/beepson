@@ -8,11 +8,12 @@ namespace BeepsOnBot.Services.Notification;
 public class NotificationBackgroundService : BackgroundService
 {
     private readonly ITelegramBotClient _botClient;
+
     public NotificationBackgroundService(ITelegramBotClient botClient)
     {
         _botClient = botClient;
     }
-    
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (true)

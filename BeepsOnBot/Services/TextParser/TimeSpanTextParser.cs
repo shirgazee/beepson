@@ -28,21 +28,18 @@ public class TimeSpanTextParser : ITextParser
         var minutes = match.Groups["minutes"].Success ? int.Parse(match.Groups["minutes"].Value.TrimEnd('m')) : 0;
         if (minutes is > 59 or < 0)
             return TextParseResult.FalseResult;
-        
+
         var seconds = match.Groups["seconds"].Success ? int.Parse(match.Groups["seconds"].Value.TrimEnd('s')) : 0;
         if (seconds is > 59 or < 0)
             return TextParseResult.FalseResult;
 
         var task = string.Empty;
-        if (match.Groups["hashtag"].Success && match.Groups["task"].Success)
-        {
-            task = match.Groups["task"].Value.Trim();
-        }
+        if (match.Groups["hashtag"].Success && match.Groups["task"].Success) task = match.Groups["task"].Value.Trim();
 
         var totalSeconds = seconds + minutes * 60 + hours * 3600;
-        if(totalSeconds == 0)
+        if (totalSeconds == 0)
             return TextParseResult.FalseResult;
-        
+
         var notifyAt = DateTime.UtcNow.AddSeconds(totalSeconds);
 
         return new TextParseResult(true, new TimerNotification(chatId, notifyAt, task, text));
